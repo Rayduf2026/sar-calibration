@@ -316,18 +316,17 @@ function buildSummary() {
 
 function submitData() {
   readFields(); calcAnc();
-  vals.session_id = (vals.date_depot||new Date().toISOString().slice(0,10)).replace(/-/g,'') + '_' + (vals.pisteur||'x').replace(/\s/g,'').slice(0,10);
+  vals.session_id = (vals.date_depot||new Date().toISOString().slice(0,10)).replace(/-/g,'') +
+    '_' + (vals.pisteur||'x').replace(/\s/g,'').slice(0,10);
   var btn = document.getElementById('btn-submit');
   btn.innerHTML = '<span class="spinner"></span>Envoi...';
   btn.disabled = true;
-fetch(SCRIPT_URL, {
-    method:'POST',
-    mode:'no-cors',
-    body:JSON.stringify(vals),
-    headers:{'Content-Type':'application/json'}
-  })
-  .then(function(){showResult('ok');})
-  .catch(function(){showResult('error');});
+  var params = Object.keys(vals).map(function(k){
+    return encodeURIComponent(k) + '=' + encodeURIComponent(vals[k]);
+  }).join('&');
+  var img = new Image();
+  img.onload = img.onerror = function(){ showResult('ok'); };
+  img.src = SCRIPT_URL + '?' + params;
 }
 
 function showResult(status, data) {

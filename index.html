@@ -1,0 +1,375 @@
+
+SAR_Tracking_Box_v3.2_FINAL
+
+Page
+1
+/
+1
+100 %
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SAR Tracking Box v3.2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#1a1a1a;font-size:16px}
+.app{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:90px}
+.header{background:#1F3864;color:#fff;padding:16px;position:sticky;top:0;z-index:100}
+.header h1{font-size:17px;font-weight:600;margin-bottom:2px}
+.header p{font-size:12px;opacity:.8}
+.progress-wrap{margin-top:10px;background:rgba(255,255,255,.25);border-radius:3px;height:4px}
+.progress-fill{height:4px;background:#4ECBA5;border-radius:3px;transition:width .3s}
+.gps-bar{background:#0F6E56;color:#fff;padding:8px 16px;font-size:12px;display:flex;align-items:center;gap:8px}
+.gps-dot{width:8px;height:8px;border-radius:50%;background:#4ECBA5;flex-shrink:0}
+.gps-dot.searching{animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.step{display:none;padding:20px 16px}
+.step.active{display:block}
+.step-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.step-title{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:6px}
+.step-hint{font-size:14px;color:#555;margin-bottom:24px;line-height:1.5}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:13px;font-weight:500;color:#444;margin-bottom:8px}
+.field input,.field select{width:100%;padding:13px 14px;font-size:16px;border:1.5px solid #ddd;border-radius:12px;background:#fff;color:#1a1a1a;-webkit-appearance:none}
+.field input:focus,.field select:focus{outline:none;border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,.12)}
+.radio-group{display:flex;flex-direction:column;gap:10px}
+.radio-opt{display:flex;align-items:flex-start;gap:14px;padding:14px;border:1.5px solid #e5e5e5;border-radius:14px;cursor:pointer;background:#fff;transition:all .15s;-webkit-user-select:none;user-select:none}
+.radio-opt:active{transform:scale(.98)}
+.radio-opt.selected{border-color:#1D9E75;background:#f0fdf8}
+.radio-dot{width:22px;height:22px;border-radius:50%;border:2px solid #ccc;margin-top:1px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s}
+.radio-opt.selected .radio-dot{border-color:#1D9E75;background:#1D9E75}
+.radio-dot::after{content:'';width:9px;height:9px;border-radius:50%;background:#fff;display:none}
+.radio-opt.selected .radio-dot::after{display:block}
+.opt-title{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:2px}
+.opt-desc{font-size:13px;color:#666;line-height:1.4}
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.score-card{padding:16px 12px;border:1.5px solid #e5e5e5;border-radius:14px;cursor:pointer;background:#fff;text-align:center;transition:all .15s;-webkit-user-select:none;user-select:none}
+.score-card:active{transform:scale(.97)}
+.score-card.selected{border-color:#1D9E75;background:#f0fdf8}
+.score-num{font-size:36px;font-weight:700;color:#1a1a1a;line-height:1}
+.score-title{font-size:13px;font-weight:600;color:#1a1a1a;margin:6px 0 4px}
+.score-desc{font-size:12px;color:#666;line-height:1.3}
+.score-card.selected .score-num,.score-card.selected .score-title{color:#0F6E56}
+.anc-box{background:#f0fdf8;border:1.5px solid #1D9E75;border-radius:14px;padding:18px;text-align:center;margin-top:16px;display:none}
+.anc-label{font-size:12px;color:#0F6E56;font-weight:500;margin-bottom:4px}
+.anc-val{font-size:40px;font-weight:700;color:#1D9E75;line-height:1}
+.anc-unit{font-size:13px;color:#0F6E56}
+.divider{height:1px;background:#f0f0f0;margin:20px 0}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;padding:12px 16px;display:flex;gap:10px;z-index:100}
+.btn{flex:1;padding:15px;border-radius:14px;font-size:16px;font-weight:600;border:1.5px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;transition:all .15s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:#1D9E75;color:#fff;border-color:#1D9E75}
+.btn-primary:active{background:#0F6E56}
+.btn-back{flex:0 0 56px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.summary-card{background:#f9f9f9;border:1px solid #eee;border-radius:14px;padding:16px;margin-bottom:16px}
+.summary-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:14px}
+.summary-row:last-child{border:none}
+.summary-key{color:#666}
+.summary-val{font-weight:600;color:#1a1a1a;text-align:right;max-width:60%}
+.status-box{border-radius:14px;padding:20px;text-align:center;margin-bottom:16px}
+.status-ok{background:#f0fdf8;border:1.5px solid #1D9E75}
+.status-pending{background:#FAEEDA;border:1.5px solid #BA7517}
+.status-error{background:#FADBD8;border:1.5px solid #A32D2D}
+.status-icon{font-size:40px;margin-bottom:8px}
+.status-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.status-desc{font-size:13px;color:#555;line-height:1.4}
+.btn-new{width:100%;padding:15px;border-radius:14px;font-size:16px;font-weight:600;border:1.5px solid #ddd;cursor:pointer;background:#f5f5f5;color:#1a1a1a;margin-top:10px}
+.spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Tracking Box - Calibration SAR</h1>
+    <p id="step-counter">Etape 1 sur 8</p>
+    <div class="progress-wrap"><div class="progress-fill" id="progress" style="width:12.5%"></div></div>
+  </div>
+  <div class="gps-bar" id="gps-bar">
+    <div class="gps-dot searching" id="gps-dot"></div>
+    <span id="gps-txt">Localisation en cours...</span>
+  </div>
+
+  <div class="step active" id="s1">
+    <div class="step-label">Etape 1 sur 8</div>
+    <div class="step-title">Identification</div>
+    <div class="step-hint">Qui fait l'observation, quelle trace ?</div>
+    <div class="field"><label>Ton nom</label><input type="text" id="pisteur" placeholder="ex. Raymond T." autocomplete="name"/></div>
+    <div class="field"><label>ID de la trace</label><input type="text" id="trace_id" placeholder="ex. T01, T02"/></div>
+    <div class="field"><label>Date du depot</label><input type="date" id="date_depot"/></div>
+    <div class="field"><label>Heure du depot</label><input type="time" id="heure_depot"/></div>
+  </div>
+
+  <div class="step" id="s2">
+    <div class="step-label">Etape 2 sur 8</div>
+    <div class="step-title">Substrat</div>
+    <div class="step-hint">Sur quoi la trace a ete deposee ?</div>
+    <div class="radio-group" id="substrat-g">
+      <div class="radio-opt" onclick="sel(this,'substrat','NEIGE_M')"><div class="radio-dot"></div><div><div class="opt-title">Neige meuble</div><div class="opt-desc">Fraiche, non compactee, moins de 24h</div></div></div>
+      <div class="radio-opt" onclick="sel(this,'substrat','NEIGE_C')"><div class="radio-dot"></div><div><div class="opt-title">Neige compacte / regelee</div><div class="opt-desc">Croute dure, neige ancienne</div></div></div>
+      <div class="radio-opt" onclick="sel(this,'substrat','SOL_M')"><div class="radio-dot"></div><div><div class="opt-title">Sol meuble / humus</div><div class="opt-desc">Terre forestiere, feuilles decomposees</div></div></div>
+      <div class="radio-opt" onclick="sel(this,'substrat','SABLE')"><div class="radio-dot"></div><div><div class="opt-title">Sable sec</div><div class="opt-desc">Sable peu cohesif</div></div></div>
+      <div class="radio-opt" onclick="sel(this,'substrat','ARGILE')"><div class="radio-dot"></div><div><div class="opt-title">Argile / sol humide compact</div><div class="opt-desc">Sol lourd, cohesif</div></div></div>
+      <div class="radio-opt" onclick="sel(this,'substrat','ROCHE')"><div class="radio-dot"></div><div><div class="opt-title">Roche / sol dur</div></div></div>
+    </div>
+  </div>
+
+  <div class="step" id="s3">
+    <div class="step-label">Etape 3 sur 8</div>
+    <div class="step-title">Conditions au depot</div>
+    <div class="step-hint">Etat du sol au moment exact du depot (J0)</div>
+    <div class="field"><label>Humidite du sol a J0</label>
+      <div class="radio-group" id="humid-g">
+        <div class="radio-opt" onclick="sel(this,'humidite','SEC')"><div class="radio-dot"></div><div><div class="opt-title">Sec</div><div class="opt-desc">Poussiere, pas de cohesion visible</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'humidite','NORMAL')"><div class="radio-dot"></div><div><div class="opt-title">Normal</div><div class="opt-desc">Sol ordinaire</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'humidite','HUMIDE')"><div class="radio-dot"></div><div><div class="opt-title">Humide</div><div class="opt-desc">Cohesion visible, sol fonce</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'humidite','DETREMPE')"><div class="radio-dot"></div><div><div class="opt-title">Detrempe</div><div class="opt-desc">Eau en surface, boue</div></div></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="field"><label>Profondeur initiale (mm) - mesurer a la regle</label><input type="number" id="profondeur" placeholder="ex. 8" min="0" max="100" step="0.5" inputmode="decimal"/></div>
+    <div class="field"><label>Saison</label>
+      <div class="radio-group" id="saison-g" style="flex-direction:row">
+        <div class="radio-opt" style="flex:1" onclick="sel(this,'saison','C')"><div class="radio-dot"></div><div><div class="opt-title">Chaude</div><div class="opt-desc">Pas de gel</div></div></div>
+        <div class="radio-opt" style="flex:1" onclick="sel(this,'saison','F')"><div class="radio-dot"></div><div><div class="opt-title">Froide</div><div class="opt-desc">Gel possible</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="s4">
+    <div class="step-label">Etape 4 sur 8</div>
+    <div class="step-title">Traceur</div>
+    <div class="step-hint">Qui a fait la trace et avec quoi ?</div>
+    <div class="field"><label>Type de chaussure</label>
+      <div class="radio-group" id="chaussure-g">
+        <div class="radio-opt" onclick="sel(this,'chaussure','BOTTE_SAR')"><div class="radio-dot"></div><div><div class="opt-title">Botte SAR / randonee lourde</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'chaussure','BOTTINE')"><div class="radio-dot"></div><div><div class="opt-title">Bottine / chaussure de travail</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'chaussure','SOULIER_V')"><div class="radio-dot"></div><div><div class="opt-title">Soulier de ville</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'chaussure','COURSE')"><div class="radio-dot"></div><div><div class="opt-title">Chaussure de course / trail</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'chaussure','BOTTE_HIVER')"><div class="radio-dot"></div><div><div class="opt-title">Botte d'hiver</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'chaussure','PIED_NU')"><div class="radio-dot"></div><div><div class="opt-title">Pied nu</div></div></div>
+      </div>
+    </div>
+    <div class="field"><label>Poids du porteur (kg)</label><input type="number" id="poids" placeholder="ex. 82" min="30" max="250" inputmode="numeric"/></div>
+  </div>
+
+  <div class="step" id="s5">
+    <div class="step-label">Etape 5 sur 8</div>
+    <div class="step-title">Heure d'observation</div>
+    <div class="step-hint">A quelle heure tu observes la trace maintenant ?</div>
+    <div class="field"><label>Date de l'observation</label><input type="date" id="date_obs"/></div>
+    <div class="field"><label>Heure de l'observation</label><input type="time" id="heure_obs"/></div>
+    <div class="anc-box" id="anc-box">
+      <div class="anc-label">Anciennete calculee</div>
+      <div class="anc-val" id="anc-val">0</div>
+      <div class="anc-unit">heures</div>
+    </div>
+  </div>
+
+  <div class="step" id="s6">
+    <div class="step-label">Etape 6 sur 8</div>
+    <div class="step-title">Score - Details</div>
+    <div class="step-hint">Striures, coutures, relief de la semelle</div>
+    <div class="score-grid" id="detail-g">
+      <div class="score-card" onclick="selScore(this,'detail',1)"><div class="score-num">1</div><div class="score-title">Excellent</div><div class="score-desc">Tous les details visibles, bords nets</div></div>
+      <div class="score-card" onclick="selScore(this,'detail',2)"><div class="score-num">2</div><div class="score-title">Bon</div><div class="score-desc">Details partiels, bords lisibles</div></div>
+      <div class="score-card" onclick="selScore(this,'detail',3)"><div class="score-num">3</div><div class="score-title">Faible</div><div class="score-desc">Details absents, surface lissee</div></div>
+      <div class="score-card" onclick="selScore(this,'detail',4)"><div class="score-num">4</div><div class="score-title">Nul</div><div class="score-desc">Trace illisible</div></div>
+    </div>
+  </div>
+
+  <div class="step" id="s7">
+    <div class="step-label">Etape 7 sur 8</div>
+    <div class="step-title">Score - Forme</div>
+    <div class="step-hint">Contour, profondeur, axe du pied</div>
+    <div class="score-grid" id="forme-g">
+      <div class="score-card" onclick="selScore(this,'forme',1)"><div class="score-num">1</div><div class="score-title">Excellent</div><div class="score-desc">Contour complet, profondeur conservee</div></div>
+      <div class="score-card" onclick="selScore(this,'forme',2)"><div class="score-num">2</div><div class="score-title">Bon</div><div class="score-desc">Forme reconnaissable, bords erodes</div></div>
+      <div class="score-card" onclick="selScore(this,'forme',3)"><div class="score-num">3</div><div class="score-title">Faible</div><div class="score-desc">Forme generale seulement</div></div>
+      <div class="score-card" onclick="selScore(this,'forme',4)"><div class="score-num">4</div><div class="score-title">Nul</div><div class="score-desc">Trace non identifiable</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="field"><label>Confiance de l'observation</label>
+      <div class="radio-group" id="confiance-g">
+        <div class="radio-opt" onclick="sel(this,'confiance','1')"><div class="radio-dot"></div><div><div class="opt-title">1 - Haute</div><div class="opt-desc">Conditions optimales, je suis certain</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'confiance','2')"><div class="radio-dot"></div><div><div class="opt-title">2 - Moyenne</div><div class="opt-desc">Legere incertitude</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'confiance','3')"><div class="radio-dot"></div><div><div class="opt-title">3 - Faible</div><div class="opt-desc">Incertitude importante</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="s8">
+    <div class="step-label">Etape 8 sur 8</div>
+    <div class="step-title">Resume</div>
+    <div class="step-hint">Verifie et envoie</div>
+    <div class="summary-card" id="summary"></div>
+    <div id="submit-area">
+      <button class="btn btn-primary" style="width:100%" onclick="submitData()" id="btn-submit">Envoyer dans Google Sheet</button>
+    </div>
+    <div id="result-area" style="display:none"></div>
+    <button class="btn-new" onclick="newObs()" id="btn-new-obs" style="display:none">+ Nouvelle observation (meme trace)</button>
+  </div>
+
+  <div class="nav" id="nav-bar">
+    <button class="btn btn-back" id="btn-prev" onclick="prev()" style="display:none">&#8592;</button>
+    <button class="btn btn-primary" id="btn-next" onclick="next()">Suivant &#8594;</button>
+  </div>
+</div>
+
+<script>
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJc_Ausds-q-O_kYCvYYTjluWp4J84k2cMTNEHRnWDYEan-6ypePGpr7lCOtlDF/exec";
+var STEPS = 8;
+var cur = 1;
+var vals = {};
+
+function initGPS() {
+  if (!navigator.geolocation) {
+    document.getElementById('gps-txt').textContent = 'GPS non disponible';
+    document.getElementById('gps-dot').classList.remove('searching');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      vals.lat = pos.coords.latitude.toFixed(6);
+      vals.lon = pos.coords.longitude.toFixed(6);
+      vals.gps_precision = Math.round(pos.coords.accuracy);
+      document.getElementById('gps-dot').classList.remove('searching');
+      document.getElementById('gps-dot').style.background = '#4ECBA5';
+      document.getElementById('gps-txt').textContent = 'GPS: ' + vals.lat + ', ' + vals.lon + ' (+-' + vals.gps_precision + 'm)';
+    },
+    function(err) {
+      document.getElementById('gps-dot').classList.remove('searching');
+      document.getElementById('gps-dot').style.background = '#E24B4A';
+      document.getElementById('gps-txt').textContent = 'GPS refuse - coordonnees manquantes';
+    },
+    {enableHighAccuracy:true, timeout:15000, maximumAge:60000}
+  );
+}
+
+function sel(el, key, val) {
+  el.closest('.radio-group').querySelectorAll('.radio-opt').forEach(function(o){o.classList.remove('selected');});
+  el.classList.add('selected');
+  vals[key] = val;
+}
+
+function selScore(el, key, val) {
+  el.closest('.score-grid').querySelectorAll('.score-card').forEach(function(o){o.classList.remove('selected');});
+  el.classList.add('selected');
+  vals[key] = val;
+}
+
+function updateUI() {
+  document.getElementById('progress').style.width = (cur/STEPS*100) + '%';
+  document.getElementById('step-counter').textContent = 'Etape ' + cur + ' sur ' + STEPS;
+  document.getElementById('btn-prev').style.display = cur > 1 ? 'flex' : 'none';
+  document.getElementById('btn-next').textContent = cur === STEPS ? 'Verifier' : 'Suivant';
+  document.getElementById('nav-bar').style.display = cur === STEPS ? 'none' : 'flex';
+}
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('s'+n).classList.add('active');
+  updateUI();
+  if (n === 5) initAnc();
+  if (n === STEPS) buildSummary();
+  window.scrollTo(0,0);
+}
+
+function initAnc() {
+  ['date_depot','heure_depot','date_obs','heure_obs'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) { el.removeEventListener('change',calcAnc); el.addEventListener('change',calcAnc); }
+  });
+  calcAnc();
+}
+
+function calcAnc() {
+  var dd = document.getElementById('date_depot').value;
+  var hd = document.getElementById('heure_depot').value;
+  var do_ = document.getElementById('date_obs').value;
+  var ho = document.getElementById('heure_obs').value;
+  var box = document.getElementById('anc-box');
+  if (dd && hd && do_ && ho) {
+    var diff = (new Date(do_+'T'+ho) - new Date(dd+'T'+hd)) / 3600000;
+    if (diff >= 0) {
+      document.getElementById('anc-val').textContent = diff.toFixed(1);
+      vals.anciennete = diff.toFixed(1);
+      box.style.display = 'block';
+      return;
+    }
+  }
+  box.style.display = 'none';
+}
+
+function readFields() {
+  ['pisteur','trace_id','date_depot','heure_depot','profondeur','poids','date_obs','heure_obs'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.value) vals[id] = el.value;
+  });
+}
+
+function buildSummary() {
+  readFields(); calcAnc();
+  var labels = {pisteur:'Pisteur',trace_id:'Trace ID',date_depot:'Date depot',heure_depot:'Heure depot',substrat:'Substrat',humidite:'Humidite J0',profondeur:'Profondeur mm',saison:'Saison',chaussure:'Chaussure',poids:'Poids kg',date_obs:'Date obs',heure_obs:'Heure obs',anciennete:'Anciennete h',detail:'Score details',forme:'Score forme',confiance:'Confiance',lat:'Latitude',lon:'Longitude'};
+  var html = '';
+  for (var k in labels) {
+    if (vals[k] !== undefined && vals[k] !== '') {
+      html += '<div class="summary-row"><span class="summary-key">'+labels[k]+'</span><span class="summary-val">'+vals[k]+'</span></div>';
+    }
+  }
+  document.getElementById('summary').innerHTML = html;
+}
+
+function submitData() {
+  readFields(); calcAnc();
+  vals.session_id = (vals.date_depot||new Date().toISOString().slice(0,10)).replace(/-/g,'') + '_' + (vals.pisteur||'x').replace(/\s/g,'').slice(0,10);
+  var btn = document.getElementById('btn-submit');
+  btn.innerHTML = '<span class="spinner"></span>Envoi...';
+  btn.disabled = true;
+  fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify(vals), headers:{'Content-Type':'application/json'}})
+    .then(function(r){return r.json();})
+    .then(function(data){showResult(data.status==='ok'?'ok':'error',data);})
+    .catch(function(){showResult('error');});
+}
+
+function showResult(status, data) {
+  document.getElementById('submit-area').style.display = 'none';
+  document.getElementById('btn-new-obs').style.display = 'block';
+  var area = document.getElementById('result-area');
+  area.style.display = 'block';
+  var meteoMsg = (data&&data.meteo_status==='ok') ? 'Meteo enregistree automatiquement' : 'Meteo sera recuperee cette nuit (batch auto)';
+  if (status === 'ok') {
+    area.innerHTML = '<div class="status-box status-ok"><div class="status-icon">OK</div><div class="status-title">Donnees enregistrees</div><div class="status-desc">Observation dans Google Sheet.<br><br>'+meteoMsg+'</div></div>';
+  } else {
+    area.innerHTML = '<div class="status-box status-error"><div class="status-icon">!</div><div class="status-title">Erreur connexion</div><div class="status-desc">Verifie ta connexion et reessaie.</div></div><button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="submitData()">Reessayer</button>';
+  }
+}
+
+function newObs() {
+  ['date_obs','heure_obs'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  ['detail','forme','confiance','anciennete'].forEach(function(k){delete vals[k];});
+  document.querySelectorAll('#detail-g .score-card,#forme-g .score-card').forEach(function(c){c.classList.remove('selected');});
+  document.querySelectorAll('#confiance-g .radio-opt').forEach(function(c){c.classList.remove('selected');});
+  document.getElementById('anc-box').style.display='none';
+  document.getElementById('submit-area').style.display='block';
+  document.getElementById('result-area').style.display='none';
+  document.getElementById('btn-new-obs').style.display='none';
+  var btn=document.getElementById('btn-submit');
+  btn.innerHTML='Envoyer dans Google Sheet';btn.disabled=false;
+  cur=5;showStep(5);
+}
+
+function next(){readFields();if(cur<STEPS){cur++;showStep(cur);}}
+function prev(){if(cur>1){cur--;showStep(cur);}}
+
+var today = new Date().toISOString().slice(0,10);
+document.getElementById('date_depot').value = today;
+document.getElementById('date_obs').value = today;
+updateUI();
+initGPS();
+</script>
+</body>
+</html>
+Affichage de SAR_Tracking_Box_v3.2_FINAL en cours.

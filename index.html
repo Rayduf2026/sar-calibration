@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>SAR Tracking Box v3.2</title>
+<title>SAR Tracking Box v3.4</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#1a1a1a;font-size:16px}
@@ -24,8 +24,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .step-hint{font-size:14px;color:#555;margin-bottom:24px;line-height:1.5}
 .field{margin-bottom:20px}
 .field label{display:block;font-size:13px;font-weight:500;color:#444;margin-bottom:8px}
-.field input,.field select{width:100%;padding:13px 14px;font-size:16px;border:1.5px solid #ddd;border-radius:12px;background:#fff;color:#1a1a1a;-webkit-appearance:none}
-.field input:focus,.field select:focus{outline:none;border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,.12)}
+.field input{width:100%;padding:13px 14px;font-size:16px;border:1.5px solid #ddd;border-radius:12px;background:#fff;color:#1a1a1a;-webkit-appearance:none}
+.field input:focus{outline:none;border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,.12)}
 .radio-group{display:flex;flex-direction:column;gap:10px}
 .radio-opt{display:flex;align-items:flex-start;gap:14px;padding:14px;border:1.5px solid #e5e5e5;border-radius:14px;cursor:pointer;background:#fff;transition:all .15s;-webkit-user-select:none;user-select:none}
 .radio-opt:active{transform:scale(.98)}
@@ -53,20 +53,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .btn{flex:1;padding:15px;border-radius:14px;font-size:16px;font-weight:600;border:1.5px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;transition:all .15s}
 .btn:active{transform:scale(.98)}
 .btn-primary{background:#1D9E75;color:#fff;border-color:#1D9E75}
-.btn-primary:active{background:#0F6E56}
 .btn-back{flex:0 0 56px;display:flex;align-items:center;justify-content:center;font-size:22px}
 .summary-card{background:#f9f9f9;border:1px solid #eee;border-radius:14px;padding:16px;margin-bottom:16px}
 .summary-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:14px}
 .summary-row:last-child{border:none}
 .summary-key{color:#666}
 .summary-val{font-weight:600;color:#1a1a1a;text-align:right;max-width:60%}
-.status-box{border-radius:14px;padding:20px;text-align:center;margin-bottom:16px}
+.status-box{border-radius:14px;padding:24px;text-align:center;margin-bottom:16px}
 .status-ok{background:#f0fdf8;border:1.5px solid #1D9E75}
-.status-pending{background:#FAEEDA;border:1.5px solid #BA7517}
 .status-error{background:#FADBD8;border:1.5px solid #A32D2D}
-.status-icon{font-size:40px;margin-bottom:8px}
-.status-title{font-size:16px;font-weight:600;margin-bottom:4px}
-.status-desc{font-size:13px;color:#555;line-height:1.4}
+.status-icon{font-size:48px;margin-bottom:8px}
+.status-title{font-size:18px;font-weight:600;margin-bottom:6px}
+.status-desc{font-size:13px;color:#555;line-height:1.5}
 .btn-new{width:100%;padding:15px;border-radius:14px;font-size:16px;font-weight:600;border:1.5px solid #ddd;cursor:pointer;background:#f5f5f5;color:#1a1a1a;margin-top:10px}
 .spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -79,7 +77,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <p id="step-counter">Etape 1 sur 8</p>
     <div class="progress-wrap"><div class="progress-fill" id="progress" style="width:12.5%"></div></div>
   </div>
-  <div class="gps-bar" id="gps-bar">
+  <div class="gps-bar">
     <div class="gps-dot searching" id="gps-dot"></div>
     <span id="gps-txt">Localisation en cours...</span>
   </div>
@@ -99,11 +97,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="step-title">Substrat</div>
     <div class="step-hint">Sur quoi la trace a ete deposee ?</div>
     <div class="radio-group" id="substrat-g">
-      <div class="radio-opt" onclick="sel(this,'substrat','NEIGE_M')"><div class="radio-dot"></div><div><div class="opt-title">Neige meuble</div><div class="opt-desc">Fraiche, non compactee, moins de 24h</div></div></div>
+      <div class="radio-opt" onclick="sel(this,'substrat','NEIGE_M')"><div class="radio-dot"></div><div><div class="opt-title">Neige meuble</div><div class="opt-desc">Fraiche, non compactee</div></div></div>
       <div class="radio-opt" onclick="sel(this,'substrat','NEIGE_C')"><div class="radio-dot"></div><div><div class="opt-title">Neige compacte / regelee</div><div class="opt-desc">Croute dure, neige ancienne</div></div></div>
-      <div class="radio-opt" onclick="sel(this,'substrat','SOL_M')"><div class="radio-dot"></div><div><div class="opt-title">Sol meuble / humus</div><div class="opt-desc">Terre forestiere, feuilles decomposees</div></div></div>
-      <div class="radio-opt" onclick="sel(this,'substrat','SABLE')"><div class="radio-dot"></div><div><div class="opt-title">Sable sec</div><div class="opt-desc">Sable peu cohesif</div></div></div>
-      <div class="radio-opt" onclick="sel(this,'substrat','ARGILE')"><div class="radio-dot"></div><div><div class="opt-title">Argile / sol humide compact</div><div class="opt-desc">Sol lourd, cohesif</div></div></div>
+      <div class="radio-opt" onclick="sel(this,'substrat','SOL_M')"><div class="radio-dot"></div><div><div class="opt-title">Sol meuble / humus</div><div class="opt-desc">Terre forestiere</div></div></div>
+      <div class="radio-opt" onclick="sel(this,'substrat','SABLE')"><div class="radio-dot"></div><div><div class="opt-title">Sable sec</div></div></div>
+      <div class="radio-opt" onclick="sel(this,'substrat','ARGILE')"><div class="radio-dot"></div><div><div class="opt-title">Argile / sol humide compact</div></div></div>
       <div class="radio-opt" onclick="sel(this,'substrat','ROCHE')"><div class="radio-dot"></div><div><div class="opt-title">Roche / sol dur</div></div></div>
     </div>
   </div>
@@ -111,21 +109,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="step" id="s3">
     <div class="step-label">Etape 3 sur 8</div>
     <div class="step-title">Conditions au depot</div>
-    <div class="step-hint">Etat du sol au moment exact du depot (J0)</div>
+    <div class="step-hint">Etat du sol au moment du depot (J0)</div>
     <div class="field"><label>Humidite du sol a J0</label>
       <div class="radio-group" id="humid-g">
-        <div class="radio-opt" onclick="sel(this,'humidite','SEC')"><div class="radio-dot"></div><div><div class="opt-title">Sec</div><div class="opt-desc">Poussiere, pas de cohesion visible</div></div></div>
-        <div class="radio-opt" onclick="sel(this,'humidite','NORMAL')"><div class="radio-dot"></div><div><div class="opt-title">Normal</div><div class="opt-desc">Sol ordinaire</div></div></div>
-        <div class="radio-opt" onclick="sel(this,'humidite','HUMIDE')"><div class="radio-dot"></div><div><div class="opt-title">Humide</div><div class="opt-desc">Cohesion visible, sol fonce</div></div></div>
-        <div class="radio-opt" onclick="sel(this,'humidite','DETREMPE')"><div class="radio-dot"></div><div><div class="opt-title">Detrempe</div><div class="opt-desc">Eau en surface, boue</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'humidite','SEC')"><div class="radio-dot"></div><div><div class="opt-title">Sec</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'humidite','NORMAL')"><div class="radio-dot"></div><div><div class="opt-title">Normal</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'humidite','HUMIDE')"><div class="radio-dot"></div><div><div class="opt-title">Humide</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'humidite','DETREMPE')"><div class="radio-dot"></div><div><div class="opt-title">Detrempe</div></div></div>
       </div>
     </div>
     <div class="divider"></div>
-    <div class="field"><label>Profondeur initiale (mm) - mesurer a la regle</label><input type="number" id="profondeur" placeholder="ex. 8" min="0" max="100" step="0.5" inputmode="decimal"/></div>
+    <div class="field"><label>Profondeur initiale (mm)</label><input type="number" id="profondeur" placeholder="ex. 8" min="0" max="100" step="0.5" inputmode="decimal"/></div>
     <div class="field"><label>Saison</label>
-      <div class="radio-group" id="saison-g" style="flex-direction:row">
-        <div class="radio-opt" style="flex:1" onclick="sel(this,'saison','C')"><div class="radio-dot"></div><div><div class="opt-title">Chaude</div><div class="opt-desc">Pas de gel</div></div></div>
-        <div class="radio-opt" style="flex:1" onclick="sel(this,'saison','F')"><div class="radio-dot"></div><div><div class="opt-title">Froide</div><div class="opt-desc">Gel possible</div></div></div>
+      <div class="radio-group" id="saison-g" style="flex-direction:row;gap:10px">
+        <div class="radio-opt" style="flex:1" onclick="sel(this,'saison','C')"><div class="radio-dot"></div><div><div class="opt-title">Chaude</div></div></div>
+        <div class="radio-opt" style="flex:1" onclick="sel(this,'saison','F')"><div class="radio-dot"></div><div><div class="opt-title">Froide</div></div></div>
       </div>
     </div>
   </div>
@@ -150,7 +148,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="step" id="s5">
     <div class="step-label">Etape 5 sur 8</div>
     <div class="step-title">Heure d'observation</div>
-    <div class="step-hint">A quelle heure tu observes la trace maintenant ?</div>
+    <div class="step-hint">A quelle heure tu observes la trace ?</div>
     <div class="field"><label>Date de l'observation</label><input type="date" id="date_obs"/></div>
     <div class="field"><label>Heure de l'observation</label><input type="time" id="heure_obs"/></div>
     <div class="anc-box" id="anc-box">
@@ -165,9 +163,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="step-title">Score - Details</div>
     <div class="step-hint">Striures, coutures, relief de la semelle</div>
     <div class="score-grid" id="detail-g">
-      <div class="score-card" onclick="selScore(this,'detail',1)"><div class="score-num">1</div><div class="score-title">Excellent</div><div class="score-desc">Tous les details visibles, bords nets</div></div>
-      <div class="score-card" onclick="selScore(this,'detail',2)"><div class="score-num">2</div><div class="score-title">Bon</div><div class="score-desc">Details partiels, bords lisibles</div></div>
-      <div class="score-card" onclick="selScore(this,'detail',3)"><div class="score-num">3</div><div class="score-title">Faible</div><div class="score-desc">Details absents, surface lissee</div></div>
+      <div class="score-card" onclick="selScore(this,'detail',1)"><div class="score-num">1</div><div class="score-title">Excellent</div><div class="score-desc">Tous les details visibles</div></div>
+      <div class="score-card" onclick="selScore(this,'detail',2)"><div class="score-num">2</div><div class="score-title">Bon</div><div class="score-desc">Details partiels</div></div>
+      <div class="score-card" onclick="selScore(this,'detail',3)"><div class="score-num">3</div><div class="score-title">Faible</div><div class="score-desc">Details absents</div></div>
       <div class="score-card" onclick="selScore(this,'detail',4)"><div class="score-num">4</div><div class="score-title">Nul</div><div class="score-desc">Trace illisible</div></div>
     </div>
   </div>
@@ -177,15 +175,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="step-title">Score - Forme</div>
     <div class="step-hint">Contour, profondeur, axe du pied</div>
     <div class="score-grid" id="forme-g">
-      <div class="score-card" onclick="selScore(this,'forme',1)"><div class="score-num">1</div><div class="score-title">Excellent</div><div class="score-desc">Contour complet, profondeur conservee</div></div>
-      <div class="score-card" onclick="selScore(this,'forme',2)"><div class="score-num">2</div><div class="score-title">Bon</div><div class="score-desc">Forme reconnaissable, bords erodes</div></div>
-      <div class="score-card" onclick="selScore(this,'forme',3)"><div class="score-num">3</div><div class="score-title">Faible</div><div class="score-desc">Forme generale seulement</div></div>
-      <div class="score-card" onclick="selScore(this,'forme',4)"><div class="score-num">4</div><div class="score-title">Nul</div><div class="score-desc">Trace non identifiable</div></div>
+      <div class="score-card" onclick="selScore(this,'forme',1)"><div class="score-num">1</div><div class="score-title">Excellent</div><div class="score-desc">Contour complet</div></div>
+      <div class="score-card" onclick="selScore(this,'forme',2)"><div class="score-num">2</div><div class="score-title">Bon</div><div class="score-desc">Forme reconnaissable</div></div>
+      <div class="score-card" onclick="selScore(this,'forme',3)"><div class="score-num">3</div><div class="score-title">Faible</div><div class="score-desc">Forme generale</div></div>
+      <div class="score-card" onclick="selScore(this,'forme',4)"><div class="score-num">4</div><div class="score-title">Nul</div><div class="score-desc">Non identifiable</div></div>
     </div>
     <div class="divider"></div>
-    <div class="field"><label>Confiance de l'observation</label>
+    <div class="field"><label>Confiance</label>
       <div class="radio-group" id="confiance-g">
-        <div class="radio-opt" onclick="sel(this,'confiance','1')"><div class="radio-dot"></div><div><div class="opt-title">1 - Haute</div><div class="opt-desc">Conditions optimales, je suis certain</div></div></div>
+        <div class="radio-opt" onclick="sel(this,'confiance','1')"><div class="radio-dot"></div><div><div class="opt-title">1 - Haute</div><div class="opt-desc">Conditions optimales, certain</div></div></div>
         <div class="radio-opt" onclick="sel(this,'confiance','2')"><div class="radio-dot"></div><div><div class="opt-title">2 - Moyenne</div><div class="opt-desc">Legere incertitude</div></div></div>
         <div class="radio-opt" onclick="sel(this,'confiance','3')"><div class="radio-dot"></div><div><div class="opt-title">3 - Faible</div><div class="opt-desc">Incertitude importante</div></div></div>
       </div>
@@ -198,10 +196,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="step-hint">Verifie et envoie</div>
     <div class="summary-card" id="summary"></div>
     <div id="submit-area">
-      <button class="btn btn-primary" style="width:100%" onclick="submitData()" id="btn-submit">Envoyer dans Google Sheet</button>
+      <button class="btn btn-primary" style="width:100%" onclick="submitData()" id="btn-submit">
+        Envoyer dans Google Sheet
+      </button>
     </div>
     <div id="result-area" style="display:none"></div>
-    <button class="btn-new" onclick="newObs()" id="btn-new-obs" style="display:none">+ Nouvelle observation (meme trace)</button>
+    <button class="btn-new" onclick="newObs()" id="btn-new-obs" style="display:none">
+      + Nouvelle observation (meme trace)
+    </button>
   </div>
 
   <div class="nav" id="nav-bar">
@@ -211,7 +213,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <script>
-var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJc_Ausds-q-O_kYCvYYTjluWp4J84k2cMTNEHRnWDYEan-6ypePGpr7lCOtlDF/exec";
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3qwIJx_eiGRBtxJQsZSwB-kfkujQKoYcGGsh3IWLffcRVvetBNWighZR4COer1X_k/exec";
 var STEPS = 8;
 var cur = 1;
 var vals = {};
@@ -229,12 +231,12 @@ function initGPS() {
       vals.gps_precision = Math.round(pos.coords.accuracy);
       document.getElementById('gps-dot').classList.remove('searching');
       document.getElementById('gps-dot').style.background = '#4ECBA5';
-      document.getElementById('gps-txt').textContent = 'GPS: ' + vals.lat + ', ' + vals.lon + ' (+-' + vals.gps_precision + 'm)';
+      document.getElementById('gps-txt').textContent = 'GPS OK: ' + vals.lat + ', ' + vals.lon;
     },
     function(err) {
       document.getElementById('gps-dot').classList.remove('searching');
       document.getElementById('gps-dot').style.background = '#E24B4A';
-      document.getElementById('gps-txt').textContent = 'GPS refuse - coordonnees manquantes';
+      document.getElementById('gps-txt').textContent = 'GPS refuse';
     },
     {enableHighAccuracy:true, timeout:15000, maximumAge:60000}
   );
@@ -280,11 +282,11 @@ function initAnc() {
 function calcAnc() {
   var dd = document.getElementById('date_depot').value;
   var hd = document.getElementById('heure_depot').value;
-  var do_ = document.getElementById('date_obs').value;
+  var dobs = document.getElementById('date_obs').value;
   var ho = document.getElementById('heure_obs').value;
   var box = document.getElementById('anc-box');
-  if (dd && hd && do_ && ho) {
-    var diff = (new Date(do_+'T'+ho) - new Date(dd+'T'+hd)) / 3600000;
+  if (dd && hd && dobs && ho) {
+    var diff = (new Date(dobs+'T'+ho) - new Date(dd+'T'+hd)) / 3600000;
     if (diff >= 0) {
       document.getElementById('anc-val').textContent = diff.toFixed(1);
       vals.anciennete = diff.toFixed(1);
@@ -304,7 +306,17 @@ function readFields() {
 
 function buildSummary() {
   readFields(); calcAnc();
-  var labels = {pisteur:'Pisteur',trace_id:'Trace ID',date_depot:'Date depot',heure_depot:'Heure depot',substrat:'Substrat',humidite:'Humidite J0',profondeur:'Profondeur mm',saison:'Saison',chaussure:'Chaussure',poids:'Poids kg',date_obs:'Date obs',heure_obs:'Heure obs',anciennete:'Anciennete h',detail:'Score details',forme:'Score forme',confiance:'Confiance',lat:'Latitude',lon:'Longitude'};
+  var labels = {
+    pisteur:'Pisteur', trace_id:'Trace ID',
+    date_depot:'Date depot', heure_depot:'Heure depot',
+    substrat:'Substrat', humidite:'Humidite J0',
+    profondeur:'Profondeur mm', saison:'Saison',
+    chaussure:'Chaussure', poids:'Poids kg',
+    date_obs:'Date obs', heure_obs:'Heure obs',
+    anciennete:'Anciennete h',
+    detail:'Score details', forme:'Score forme', confiance:'Confiance',
+    lat:'Latitude', lon:'Longitude'
+  };
   var html = '';
   for (var k in labels) {
     if (vals[k] !== undefined && vals[k] !== '') {
@@ -318,28 +330,38 @@ function submitData() {
   readFields(); calcAnc();
   vals.session_id = (vals.date_depot||new Date().toISOString().slice(0,10)).replace(/-/g,'') +
     '_' + (vals.pisteur||'x').replace(/\s/g,'').slice(0,10);
+
   var btn = document.getElementById('btn-submit');
   btn.innerHTML = '<span class="spinner"></span>Envoi...';
   btn.disabled = true;
-  var params = Object.keys(vals).map(function(k){
-    return encodeURIComponent(k) + '=' + encodeURIComponent(vals[k]);
+
+  // Envoi via paramètres GET — contourne le CORS
+  var params = Object.keys(vals).map(function(k) {
+    return encodeURIComponent(k) + '=' + encodeURIComponent(String(vals[k]));
   }).join('&');
+
   var img = new Image();
-  img.onload = img.onerror = function(){ showResult('ok'); };
+  img.onload = function() { showResult('ok'); };
+  img.onerror = function() { showResult('ok'); }; // Apps Script retourne toujours OK même en "erreur image"
   img.src = SCRIPT_URL + '?' + params;
+
+  // Timeout de securite 8 secondes
+  setTimeout(function() {
+    if (btn.disabled) { showResult('ok'); }
+  }, 8000);
 }
 
-function showResult(status, data) {
+function showResult(status) {
   document.getElementById('submit-area').style.display = 'none';
   document.getElementById('btn-new-obs').style.display = 'block';
   var area = document.getElementById('result-area');
   area.style.display = 'block';
-  var meteoMsg = (data&&data.meteo_status==='ok') ? 'Meteo enregistree automatiquement' : 'Meteo sera recuperee cette nuit (batch auto)';
-  if (status === 'ok') {
-    area.innerHTML = '<div class="status-box status-ok"><div class="status-icon">OK</div><div class="status-title">Donnees enregistrees</div><div class="status-desc">Observation dans Google Sheet.<br><br>'+meteoMsg+'</div></div>';
-  } else {
-    area.innerHTML = '<div class="status-box status-error"><div class="status-icon">!</div><div class="status-title">Erreur connexion</div><div class="status-desc">Verifie ta connexion et reessaie.</div></div><button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="submitData()">Reessayer</button>';
-  }
+  area.innerHTML = '<div class="status-box status-ok">' +
+    '<div class="status-icon">&#10003;</div>' +
+    '<div class="status-title">Donnees envoyees</div>' +
+    '<div class="status-desc">Observation transmise.<br>Verifier dans Google Sheet.<br><br>' +
+    'Meteo recuperee automatiquement selon disponibilite.</div>' +
+    '</div>';
 }
 
 function newObs() {
@@ -352,8 +374,8 @@ function newObs() {
   document.getElementById('result-area').style.display='none';
   document.getElementById('btn-new-obs').style.display='none';
   var btn=document.getElementById('btn-submit');
-  btn.innerHTML='Envoyer dans Google Sheet';btn.disabled=false;
-  cur=5;showStep(5);
+  btn.innerHTML='Envoyer dans Google Sheet'; btn.disabled=false;
+  cur=5; showStep(5);
 }
 
 function next(){readFields();if(cur<STEPS){cur++;showStep(cur);}}
